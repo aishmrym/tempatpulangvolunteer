@@ -117,11 +117,17 @@
         }
 
         .lihat{
-            display:inline-block;
-            margin-top:20px;
             color:#7a0000;
             font-weight:600;
             text-decoration:none;
+        }
+
+        .action-group{
+            margin-top:20px;
+            display:flex;
+            gap:15px;
+            align-items:center;
+            flex-wrap:wrap;
         }
 
         .edit-btn{
@@ -132,6 +138,21 @@
             text-decoration:none;
             font-weight:500;
             display:inline-block;
+        }
+
+        .delete-btn{
+            background:#ff4d4d;
+            border:none;
+            color:white;
+            padding:10px 16px;
+            border-radius:10px;
+            cursor:pointer;
+            font-family:'Poppins',sans-serif;
+            font-weight:500;
+        }
+
+        .delete-form{
+            margin:0;
         }
 
         .quote{
@@ -183,7 +204,6 @@
 
 <div class="container">
 
-    <!-- TOP -->
     <div class="top">
 
         <div class="logo">
@@ -196,7 +216,6 @@
 
     </div>
 
-    <!-- HERO -->
     <div class="hero">
 
         <h1>
@@ -214,7 +233,6 @@
 
     </div>
 
-    <!-- STATISTIK -->
     <div class="stats">
 
         <div class="stat-card">
@@ -243,12 +261,10 @@
 
     </div>
 
-    <!-- TITLE -->
     <h2 class="batch-title">
         Batch Volunteer
     </h2>
 
-    <!-- CARD -->
     @foreach($batches as $batch)
 
     <div class="card">
@@ -269,7 +285,7 @@
             {{ $batch->deskripsi }}
         </p>
 
-        <div style="margin-top:20px; display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+        <div class="action-group">
 
             <a href="/batch/{{ $batch->id }}" class="lihat">
                 Lihat Volunteer →
@@ -279,24 +295,17 @@
                 Edit Batch
             </a>
 
-            <form action="/batch/{{ $batch->id }}" method="POST">
+            <form
+                action="{{ route('batch.destroy', $batch->id) }}"
+                method="POST"
+                class="delete-form"
+            >
 
                 @csrf
                 @method('DELETE')
 
-                <button type="submit"
-                style="
-                    background:#ff4d4d;
-                    border:none;
-                    color:white;
-                    padding:10px 16px;
-                    border-radius:10px;
-                    cursor:pointer;
-                    font-family:Poppins;
-                ">
-
+                <button type="submit" class="delete-btn">
                     Hapus
-
                 </button>
 
             </form>
@@ -307,7 +316,6 @@
 
     @endforeach
 
-    <!-- QUOTE -->
     <div class="quote">
 
         “Kebaikan kecil yang dilakukan bersama,
@@ -315,7 +323,6 @@
 
     </div>
 
-    <!-- FOOTER -->
     <footer>
 
         © 2026 Tempat Pulang — Volunteer Project
