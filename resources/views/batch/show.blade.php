@@ -12,19 +12,27 @@
             background:#7a0000;
             padding:40px;
             color:white;
+            margin:0;
         }
 
         .container{
-            max-width:1000px;
+            width:100%;
+            max-width:1100px;
             margin:auto;
         }
 
         .box{
+            width:100%;
             background:white;
             color:black;
             padding:30px;
             border-radius:20px;
             margin-bottom:30px;
+            box-sizing:border-box;
+        }
+
+        h1{
+            margin-bottom:10px;
         }
 
         input{
@@ -34,9 +42,10 @@
             border-radius:10px;
             border:1px solid #ccc;
             box-sizing:border-box;
+            font-family:'Poppins',sans-serif;
         }
 
-        button{
+        .btn-submit{
             width:100%;
             padding:14px;
             margin-top:15px;
@@ -44,29 +53,77 @@
             background:#7a0000;
             color:white;
             border-radius:10px;
+            cursor:pointer;
+            font-family:'Poppins',sans-serif;
+            font-weight:600;
+        }
+
+        .table-wrapper{
+            width:100%;
+            overflow-x:auto;
         }
 
         table{
             width:100%;
-            margin-top:30px;
-            border-collapse:collapse;
             background:white;
             color:black;
             border-radius:20px;
+            border-collapse:collapse;
             overflow:hidden;
         }
 
         th,td{
-            padding:15px;
+            padding:18px;
+            text-align:left;
+            vertical-align:top;
+            border-bottom:1px solid #eee;
         }
 
         th{
-            background:#f2f2f2;
+            background:#f5f5f5;
+            font-weight:600;
         }
 
-        a{
-            color:red;
+        tr:last-child td{
+            border-bottom:none;
+        }
+
+        .btn-hapus{
+            background:#7a0000;
+            color:white;
+            border:none;
+            padding:10px 18px;
+            border-radius:10px;
+            cursor:pointer;
+            font-family:'Poppins',sans-serif;
+            font-weight:500;
+            width:100%;
+        }
+
+        .btn-hapus:hover{
+            opacity:0.9;
+        }
+
+        .btn-edit{
+            display:inline-block;
+            background:#f5f5f5;
+            color:#7a0000;
+            padding:10px 18px;
+            border-radius:10px;
             text-decoration:none;
+            font-weight:600;
+            margin-bottom:10px;
+            text-align:center;
+            width:100%;
+            box-sizing:border-box;
+        }
+
+        .aksi-form{
+            margin:0;
+        }
+
+        .aksi{
+            min-width:120px;
         }
 
     </style>
@@ -90,21 +147,22 @@
         <h2>Tambah Volunteer</h2>
 
         <form action="/batch/{{ $batch->id }}/volunteer" method="POST">
+
             @csrf
 
-            <input type="text" name="nama" placeholder="Nama Lengkap">
+            <input type="text" name="nama" placeholder="Nama Lengkap" required>
 
-            <input type="email" name="email" placeholder="Email">
+            <input type="email" name="email" placeholder="Email" required>
 
-            <input type="text" name="domisili" placeholder="Domisili">
+            <input type="text" name="domisili" placeholder="Domisili" required>
 
-            <input type="text" name="nomor_hp" placeholder="Nomor HP">
+            <input type="text" name="nomor_hp" placeholder="Nomor HP" required>
 
-            <input type="text" name="instansi" placeholder="Instansi">
+            <input type="text" name="instansi" placeholder="Instansi" required>
 
-            <input type="text" name="alasan" placeholder="Alasan Mengikuti Volunteer">
+            <input type="text" name="alasan" placeholder="Alasan Mengikuti Volunteer" required>
 
-            <button type="submit">
+            <button type="submit" class="btn-submit">
                 Tambah Volunteer
             </button>
 
@@ -112,59 +170,72 @@
 
     </div>
 
-    <table>
+    <div class="table-wrapper">
 
-        <tr>
-            <th>Nama</th>
-            <th>Email</th>
-            <th>Domisili</th>
-            <th>No HP</th>
-            <th>Instansi</th>
-            <th>Alasan</th>
-            <th>Sertifikat</th>
-            <th>Aksi</th>
-        </tr>
+        <table>
 
-        @foreach($volunteers as $v)
+            <tr>
+                <th>Nama</th>
+                <th>Email</th>
+                <th>Domisili</th>
+                <th>No HP</th>
+                <th>Instansi</th>
+                <th>Alasan</th>
+                <th>Sertifikat</th>
+                <th>Aksi</th>
+            </tr>
 
-        <tr>
+            @foreach($volunteers as $v)
 
-            <td>{{ $v->nama }}</td>
+            <tr>
 
-            <td>{{ $v->email }}</td>
+                <td>{{ $v->nama }}</td>
 
-            <td>{{ $v->domisili }}</td>
+                <td>{{ $v->email }}</td>
 
-            <td>{{ $v->nomor_hp }}</td>
+                <td>{{ $v->domisili }}</td>
 
-            <td>{{ $v->instansi }}</td>
+                <td>{{ $v->nomor_hp }}</td>
 
-            <td>{{ $v->alasan }}</td>
+                <td>{{ $v->instansi }}</td>
 
-            <td>{{ $v->nomor_sertifikat }}</td>
+                <td>{{ $v->alasan }}</td>
 
-            <td>
-                <td>
+                <td>{{ $v->nomor_sertifikat }}</td>
 
-                    <form action="{{ route('volunteer.delete', $v->id) }}" method="POST">
+                <td class="aksi">
+
+                    <a
+                        href="/volunteer/edit/{{ $v->id }}"
+                        class="btn-edit"
+                    >
+                        Edit
+                    </a>
+
+                    <form
+                        action="{{ route('volunteer.delete', $v->id) }}"
+                        method="POST"
+                        class="aksi-form"
+                    >
 
                         @csrf
                         @method('DELETE')
 
-                        <button type="submit">
+                        <button type="submit" class="btn-hapus">
                             Hapus
                         </button>
 
                     </form>
 
                 </td>
-            </td>
 
-        </tr>
+            </tr>
 
-        @endforeach
+            @endforeach
 
-    </table>
+        </table>
+
+    </div>
 
 </div>
 

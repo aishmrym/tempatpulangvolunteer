@@ -13,9 +13,26 @@ Route::get('/batch/{id}', [BatchController::class, 'show']);
 
 Route::post('/batch/{id}/volunteer', [BatchController::class, 'storeVolunteer']);
 
-Route::delete('/volunteer/delete/{id}', [BatchController::class, 'deleteVolunteer'])
-    ->name('volunteer.delete');
+Route::delete('/volunteer/delete/{id}',
+[BatchController::class, 'deleteVolunteer'])
+->name('volunteer.delete');
 
-Route::delete('/batch/{id}',
+Route::delete('/batch/delete/{id}',
 [BatchController::class, 'destroy'])
 ->name('batch.destroy');
+
+Route::get('/volunteer/edit/{id}',
+[BatchController::class, 'editVolunteer'])
+->name('volunteer.edit');
+
+Route::put('/volunteer/update/{id}',
+[BatchController::class, 'updateVolunteer'])
+->name('volunteer.update');
+
+Route::get('/batch/edit/{id}',
+[BatchController::class, 'edit'])
+->name('batch.edit');
+
+Route::put('/batch/update/{id}',
+[BatchController::class, 'update'])
+->name('batch.update');

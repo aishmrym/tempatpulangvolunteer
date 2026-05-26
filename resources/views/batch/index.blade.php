@@ -124,6 +124,16 @@
             text-decoration:none;
         }
 
+        .edit-btn{
+            background:#7a0000;
+            color:white;
+            padding:10px 16px;
+            border-radius:10px;
+            text-decoration:none;
+            font-weight:500;
+            display:inline-block;
+        }
+
         .quote{
             background:white;
             color:#7a0000;
@@ -259,35 +269,39 @@
             {{ $batch->deskripsi }}
         </p>
 
-        <div style="margin-top:20px; display:flex; gap:15px;">
+        <div style="margin-top:20px; display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
 
-    <a href="/batch/{{ $batch->id }}" class="lihat">
-        Lihat Volunteer →
-    </a>
+            <a href="/batch/{{ $batch->id }}" class="lihat">
+                Lihat Volunteer →
+            </a>
 
-    <form action="/batch/{{ $batch->id }}" method="POST">
+            <a href="/batch/edit/{{ $batch->id }}" class="edit-btn">
+                Edit Batch
+            </a>
 
-        @csrf
-        @method('DELETE')
+            <form action="/batch/{{ $batch->id }}" method="POST">
 
-        <button type="submit"
-        style="
-            background:#ff4d4d;
-            border:none;
-            color:white;
-            padding:10px 16px;
-            border-radius:10px;
-            cursor:pointer;
-            font-family:Poppins;
-        ">
+                @csrf
+                @method('DELETE')
 
-            Hapus
+                <button type="submit"
+                style="
+                    background:#ff4d4d;
+                    border:none;
+                    color:white;
+                    padding:10px 16px;
+                    border-radius:10px;
+                    cursor:pointer;
+                    font-family:Poppins;
+                ">
 
-        </button>
+                    Hapus
 
-    </form>
+                </button>
 
-</div>
+            </form>
+
+        </div>
 
     </div>
 

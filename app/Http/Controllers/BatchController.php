@@ -12,7 +12,7 @@ class BatchController extends Controller
     {
         $batches = Batch::latest()->get();
 
-        $totalVolunteer = \App\Models\Volunteer::count();
+        $totalVolunteer = Volunteer::count();
 
         $totalBatch = Batch::count();
 
@@ -47,7 +47,9 @@ class BatchController extends Controller
     {
         $batch = Batch::findOrFail($id);
 
-        $volunteers = Volunteer::where('batch_id', $id)->latest()->get();
+        $volunteers = Volunteer::where('batch_id', $id)
+            ->orderBy('id', 'asc')
+            ->get();
 
         return view('batch.show', compact('batch', 'volunteers'));
     }
@@ -56,9 +58,41 @@ class BatchController extends Controller
     {
         $batch = Batch::findOrFail($id);
 
-        $jumlah = Volunteer::where('batch_id', $id)->count() + 1;
+        /*
+        |--------------------------------------------------------------------------
+        | NOMOR GLOBAL (lanjut terus antar batch)
+        |--------------------------------------------------------------------------
+        */
 
-        $nomorPeserta = str_pad($jumlah, 4, '0', STR_PAD_LEFT);
+        $lastVolunteer = Volunteer::latest()->first();
+
+        if ($lastVolunteer) {
+
+            $lastNumber = (int) substr(
+                $lastVolunteer->nomor_sertifikat,
+                0,
+                4
+            );
+
+            $newNumber = $lastNumber + 1;
+
+        } else {
+
+            $newNumber = 1;
+        }
+
+        $nomorPeserta = str_pad(
+            $newNumber,
+            4,
+            '0',
+            STR_PAD_LEFT
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | BULAN ROMAWI
+        |--------------------------------------------------------------------------
+        */
 
         $bulanRomawi = [
             1 => 'I',
@@ -75,38 +109,55 @@ class BatchController extends Controller
             12 => 'XII'
         ];
 
-        $bulan = $bulanRomawi[date('n', strtotime($batch->tanggal))];
+        $bulan = $bulanRomawi[
+            date('n', strtotime($batch->tanggal))
+        ];
 
-        $tahun = date('Y', strtotime($batch->tanggal));
+        $tahun = date(
+            'Y',
+            strtotime($batch->tanggal)
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | FORMAT NOMOR SERTIFIKAT
+        |--------------------------------------------------------------------------
+        */
 
         $nomorSertifikat =
             $nomorPeserta .
             '/TP-VOL/' .
-            $batch->nama_batch .
+            strtoupper($batch->nama_batch) .
             '/' .
             $bulan .
             '/' .
             $tahun;
 
+        /*
+        |--------------------------------------------------------------------------
+        | SIMPAN DATA
+        |--------------------------------------------------------------------------
+        */
+
         Volunteer::create([
 
-        'batch_id' => $id,
+            'batch_id' => $id,
 
-        'nama' => $request->nama,
+            'nama' => $request->nama,
 
-        'email' => $request->email,
+            'email' => $request->email,
 
-        'domisili' => $request->domisili,
+            'domisili' => $request->domisili,
 
-        'nomor_hp' => $request->nomor_hp,
+            'nomor_hp' => $request->nomor_hp,
 
-        'instansi' => $request->instansi,
+            'instansi' => $request->instansi,
 
-        'alasan' => $request->alasan,
+            'alasan' => $request->alasan,
 
-        'nomor_sertifikat' => $nomorSertifikat
+            'nomor_sertifikat' => $nomorSertifikat
 
-]);
+        ]);
 
         return redirect('/batch/' . $id);
     }
@@ -122,6 +173,62 @@ class BatchController extends Controller
         return redirect('/batch/' . $batchId);
     }
 
+    public function editVolunteer($id)
+{
+    $volunteer = Volunteer::findOrFail($id);
+
+    return view('batch.edit-volunteer', compact('volunteer'));
+}
+
+public function updateVolunteer(Request $request, $id)
+{
+    $volunteer = Volunteer::findOrFail($id);
+
+    $volunteer->update([
+
+        'nama' => $request->nama,
+
+        'email' => $request->email,
+
+        'domisili' => $request->domisili,
+
+        'nomor_hp' => $request->nomor_hp,
+
+        'instansi' => $request->instansi,
+
+        'alasan' => $request->alasan
+
+    ]);
+
+    return redirect('/batch/' . $volunteer->batch_id);
+}
+
+    public function edit($id)
+{
+    $batch = Batch::findOrFail($id);
+
+    return view('batch.edit', compact('batch'));
+}
+
+public function update(Request $request, $id)
+{
+    $batch = Batch::findOrFail($id);
+
+    $batch->update([
+
+        'nama_batch' => $request->nama_batch,
+
+        'kota' => $request->kota,
+
+        'tanggal' => $request->tanggal,
+
+        'deskripsi' => $request->deskripsi
+
+    ]);
+
+    return redirect('/');
+}
+
     public function destroy($id)
     {
         $batch = Batch::findOrFail($id);
@@ -131,5 +238,3 @@ class BatchController extends Controller
         return redirect('/');
     }
 }
-
-    
